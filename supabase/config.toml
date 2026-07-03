@@ -1,0 +1,7 @@
+# Identificador local do projeto Supabase (o vínculo real é feito com
+# `supabase link --project-ref <ref-do-projeto>`)
+project_id = "guru-clicksign-contracts"
+
+# Webhook público: a autenticação é pelo api_token do Guru no corpo
+[functions.guru-webhook]
+verify_jwt = false

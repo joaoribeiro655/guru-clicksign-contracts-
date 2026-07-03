@@ -1,0 +1,17 @@
+# Dependências e build
+node_modules
+dist
+
+# Segredos e ambiente local
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs e temporários
+*.log
+.DS_Store
+
+# Supabase CLI local
+supabase/.temp
+supabase/.branches

@@ -1,0 +1,17 @@
+{
+  "name": "guru-clicksign-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Backend Supabase Edge Functions: contrato gerado e assinado via Clicksign após pagamento aprovado no Digital Manager Guru",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "upload-templates": "node scripts/upload-contract-templates.mjs"
+  },
+  "devDependencies": {
+    "jszip": "^3.10.1",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  }
+}
