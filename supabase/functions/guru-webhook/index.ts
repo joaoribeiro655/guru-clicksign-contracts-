@@ -142,7 +142,7 @@ Deno.serve(async (req) => {
     }).catch((e) => console.error("guru-webhook: trigger generate-contract falhou:", e));
   }
 
-  // TODO Etapa 3: criar envelope na Clicksign (sandbox) e salvar envelope_id
+  // Etapa 3 (create-envelope) é disparada pelo generate-contract ao concluir
 
   return jsonResponse({
     received: true,

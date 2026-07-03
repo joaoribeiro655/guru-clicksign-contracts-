@@ -6,7 +6,7 @@
 // role key no Authorization. Idempotente: reprocessar um contrato já gerado
 // só regrava o mesmo caminho no Storage.
 //
-// TODO Etapa 3: ao final, disparar a criação do envelope na Clicksign (sandbox).
+// Ao final dispara a Etapa 3 (create-envelope, Clicksign).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { fillDocxTemplate } from "../_shared/docx.ts";
 import {
@@ -139,7 +139,16 @@ Deno.serve(async (req) => {
 
     console.log(`generate-contract[${contractId}]: gerado ${path} (template ${template.key})`);
 
-    // TODO Etapa 3: fetch para create-envelope (Clicksign sandbox) aqui
+    // Etapa 3: dispara a criação do envelope na Clicksign (fire-and-forget;
+    // a função é idempotente — envelope existente não é recriado)
+    fetch(`${Deno.env.get("SUPABASE_URL")!}/functions/v1/create-envelope`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${serviceKey}`,
+      },
+      body: JSON.stringify({ contract_id: contractId }),
+    }).catch((e) => console.error(`generate-contract[${contractId}]: trigger create-envelope falhou:`, e));
 
     return jsonResponse({ generated: true, path, template: template.key });
   } catch (err) {
