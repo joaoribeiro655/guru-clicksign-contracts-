@@ -5,3 +5,7 @@ project_id = "guru-clicksign-contracts"
 # Webhook público: a autenticação é pelo api_token do Guru no corpo
 [functions.guru-webhook]
 verify_jwt = false
+
+# Público: a página pós-pagamento consulta o status/key pelo id da transação
+[functions.get-signature-key]
+verify_jwt = false

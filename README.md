@@ -34,7 +34,7 @@ received → document_generated → envelope_created → running → closed
 | 1. Webhook do Guru | `guru-webhook` | ✅ implementada |
 | 2. Geração do documento do contrato | `generate-contract` | ✅ implementada |
 | 3. Envelope na Clicksign (draft → docs → signers → requirements → running) | `create-envelope` | ✅ implementada |
-| 4. Endpoint do widget embedded (chave de assinatura do cliente) | — | pendente |
+| 4. Endpoint do widget embedded (chave de assinatura do cliente) | `get-signature-key` | ✅ endpoint (página no front) |
 | 5. Webhook de close da Clicksign (arquivar PDF, WhatsApp, CRM) | — | pendente |
 
 ## Etapa 1 — `guru-webhook`
@@ -189,10 +189,12 @@ curl -X POST "https://<ref>.supabase.co/functions/v1/guru-webhook" \
 
 ## Etapas 4–5 (planejado)
 
-- **Etapa 4**: endpoint que devolve `contracts.clicksign_signer_key` para a
-  página pós-pagamento carregar o widget embedded da Clicksign
-  (github.com/clicksign/widget). Depende da liberação do widget pela
-  Clicksign; até lá o cliente autentica por token de e-mail
+- **Etapa 4**: o endpoint (`get-signature-key`, público) está pronto: a página
+  pós-pagamento consulta `?transaction_id=<id do Guru>` em polling e recebe
+  `{status, signer_key}` — a key vem quando o envelope está `running`. Falta a
+  página em si (front) carregar o widget embedded da Clicksign
+  (github.com/clicksign/widget) com essa key. A liberação do widget pela
+  Clicksign continua pendente; até lá o cliente autentica por token de e-mail
   (`CLICKSIGN_CLIENT_AUTH=email`).
 - **Etapa 5**: webhook de `envelope closed` → baixa o PDF assinado para o
   Storage (`signed_pdf_path`), notifica no WhatsApp e atualiza o CRM.
