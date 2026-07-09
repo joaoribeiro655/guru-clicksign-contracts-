@@ -9,3 +9,7 @@ verify_jwt = false
 # Público: a página pós-pagamento consulta o status/key pelo id da transação
 [functions.get-signature-key]
 verify_jwt = false
+
+# Público: registra o aceite do Termo de Ciência e Aceite (checkbox da página)
+[functions.accept-terms]
+verify_jwt = false

@@ -49,22 +49,25 @@ Deno.serve(async (req) => {
 
   const { data: contract, error } = await supabase
     .from("contracts")
-    .select("status, clicksign_signer_key, customer_name")
+    .select("status, clicksign_signer_key, customer_name, terms_accepted_at")
     .eq("guru_transaction_id", transactionId)
     .maybeSingle();
   if (error) return jsonResponse({ error: error.message }, 500);
   if (!contract) {
     // Contrato ainda não chegou (webhook do Guru pode levar alguns segundos)
-    return jsonResponse({ found: false, status: null, signer_key: null }, 404);
+    return jsonResponse({ found: false, status: null, terms_accepted: false, signer_key: null }, 404);
   }
 
-  // A key só serve quando o envelope está rodando (pronto para assinar).
-  // Antes disso a página segue em polling; closed = já assinado.
-  const ready = contract.status === "running" && !!contract.clicksign_signer_key;
+  // A key só sai quando o envelope está rodando E o cliente aceitou o Termo
+  // de Ciência e Aceite (accept-terms) — a ordem é garantida aqui no servidor.
+  const termsAccepted = !!contract.terms_accepted_at;
+  const ready = contract.status === "running" && termsAccepted &&
+    !!contract.clicksign_signer_key;
   return jsonResponse({
     found: true,
     status: contract.status,
     customer_name: contract.customer_name,
+    terms_accepted: termsAccepted,
     signer_key: ready ? contract.clicksign_signer_key : null,
   });
 });

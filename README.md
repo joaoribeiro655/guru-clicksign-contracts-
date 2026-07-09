@@ -189,11 +189,15 @@ curl -X POST "https://<ref>.supabase.co/functions/v1/guru-webhook" \
 
 ## Etapas 4–5 (planejado)
 
-- **Etapa 4**: o endpoint (`get-signature-key`, público) está pronto: a página
+- **Etapa 4**: endpoints prontos. `get-signature-key` (público): a página
   pós-pagamento consulta `?transaction_id=<id do Guru>` em polling e recebe
-  `{status, signer_key}` — a key vem quando o envelope está `running`. Falta a
-  página em si (front) carregar o widget embedded da Clicksign
-  (github.com/clicksign/widget) com essa key. A liberação do widget pela
+  `{status, terms_accepted, signer_key}`. `accept-terms` (público, POST
+  `{transaction_id}`): registra o aceite do Termo de Ciência e Aceite
+  (checkbox da página) com data/hora + IP em `contracts.terms_accepted_at/ip`.
+  A `signer_key` só é liberada com envelope `running` **e** termo aceito — a
+  ordem é garantida no servidor. Falta a página em si (front) exibir o termo,
+  registrar o aceite e carregar o widget embedded da Clicksign
+  (github.com/clicksign/widget) com a key. A liberação do widget pela
   Clicksign continua pendente; até lá o cliente autentica por token de e-mail
   (`CLICKSIGN_CLIENT_AUTH=email`).
 - **Etapa 5**: webhook de `envelope closed` → baixa o PDF assinado para o
