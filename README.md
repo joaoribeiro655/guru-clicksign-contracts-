@@ -107,6 +107,22 @@ O `key` do signatário cliente (devolvido no passo 3) fica em
 `contracts.clicksign_signer_key` — é ele que carrega o widget embedded na
 página (Etapa 4).
 
+## Painel administrativo (backend)
+
+O front (projeto Lovable) tem um painel `/admin` para gerenciar modelos e
+acompanhar contratos. Suporte no backend:
+
+- **Auth**: Supabase Auth + whitelist `admin_users` (cadastro manual — não há
+  signup aberto virando admin). `is_admin()` (security definer) é a base das
+  policies: admins têm CRUD em `contract_templates`, leitura em `contracts`,
+  escrita no bucket `contract-templates` e leitura no `contracts-generated`.
+  Para promover alguém (depois de criar o login): 
+  `insert into admin_users (user_id, email) select id, email from auth.users where email = '<email>';`
+- **`validate-template`** (function, exige JWT de admin): recebe um .docx em
+  base64 e responde `{ok, placeholders, unknown, missing}` contra a lista
+  oficial `KNOWN_PLACEHOLDERS` — o painel valida o arquivo ANTES de salvar
+  (placeholder desconhecido = contrato sairia quebrado; ausente = aviso).
+
 ## Setup do zero (mastigado)
 
 Pré-requisitos: [Supabase CLI](https://supabase.com/docs/guides/cli) e Node 20+.

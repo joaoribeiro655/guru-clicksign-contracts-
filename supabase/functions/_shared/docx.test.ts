@@ -3,7 +3,7 @@ import path from "node:path";
 import JSZip from "jszip";
 import { describe, expect, it } from "vitest";
 import { buildTemplateData } from "./contract-data";
-import { fillDocxTemplate, fillPlaceholders, listPlaceholders } from "./docx";
+import { fillDocxTemplate, fillPlaceholders, listDocxPlaceholders, listPlaceholders } from "./docx";
 
 const TEMPLATES_DIR = path.resolve(__dirname, "../../templates/contracts");
 
@@ -81,6 +81,18 @@ describe("fillDocxTemplate — templates reais", () => {
       expect(xml).toContain("3 de julho de 2026");
       // valores formatados (Intl pode usar NBSP no separador de milhar)
       expect(xml.replace(/ /g, ".")).toContain("20.000,00");
+    }
+  });
+
+  it("listDocxPlaceholders lê o documento inteiro dos templates reais", async () => {
+    const files = (await readdir(TEMPLATES_DIR)).filter((f) => f.endsWith(".docx"));
+    for (const file of files) {
+      const bytes = await readFile(path.join(TEMPLATES_DIR, file));
+      expect(await listDocxPlaceholders(bytes)).toEqual([
+        "CONTRATANTE_CPF", "CONTRATANTE_ENDERECO", "CONTRATANTE_NOME",
+        "DATA_ASSINATURA", "FORMA_PAGAMENTO", "PLATAFORMA",
+        "VALOR_BRUTO", "VALOR_BRUTO_EXTENSO", "VALOR_LIQUIDO", "VALOR_LIQUIDO_EXTENSO",
+      ]);
     }
   });
 

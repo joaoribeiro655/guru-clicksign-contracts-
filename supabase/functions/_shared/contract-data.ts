@@ -2,6 +2,24 @@
 // Módulo puro (sem APIs Deno) — testado via vitest em Node.
 import { formatBRL, valorLiquido, valorPorExtenso } from "./money.ts";
 
+/**
+ * Os 10 placeholders oficiais que o generate-contract sabe preencher.
+ * Um template novo pode usar um subconjunto; qualquer placeholder FORA desta
+ * lista nunca será preenchido (o preenchimento falha de propósito).
+ */
+export const KNOWN_PLACEHOLDERS = [
+  "CONTRATANTE_NOME",
+  "CONTRATANTE_CPF",
+  "CONTRATANTE_ENDERECO",
+  "PLATAFORMA",
+  "VALOR_BRUTO",
+  "VALOR_BRUTO_EXTENSO",
+  "VALOR_LIQUIDO",
+  "VALOR_LIQUIDO_EXTENSO",
+  "DATA_ASSINATURA",
+  "FORMA_PAGAMENTO",
+] as const;
+
 export interface ContractTemplateRow {
   key: string;
   title: string;

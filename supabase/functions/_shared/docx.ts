@@ -45,6 +45,21 @@ export function fillPlaceholders(xml: string, data: Record<string, string>): str
 /** Partes do docx que podem conter texto do contrato */
 const FILLABLE = /^word\/(document|header\d*|footer\d*)\.xml$/;
 
+/** Placeholders {{CHAVE}} presentes num .docx inteiro (corpo + cabeçalhos) */
+export async function listDocxPlaceholders(
+  bytes: Uint8Array | ArrayBuffer,
+): Promise<string[]> {
+  const zip = await JSZip.loadAsync(bytes);
+  const found = new Set<string>();
+  for (const name of Object.keys(zip.files)) {
+    if (!FILLABLE.test(name)) continue;
+    for (const key of listPlaceholders(await zip.files[name].async("string"))) {
+      found.add(key);
+    }
+  }
+  return [...found].sort();
+}
+
 /** Preenche um .docx (bytes) e devolve o novo .docx */
 export async function fillDocxTemplate(
   templateBytes: Uint8Array | ArrayBuffer,
